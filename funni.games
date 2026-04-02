@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PlayVault - Unblocked Games Hub</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --bg2: #111831;
+      --card: rgba(255,255,255,0.08);
+      --stroke: rgba(255,255,255,0.12);
+      --text: #f4f7ff;
+      --muted: #a7b0c9;
+      --accent: #6ea8ff;
+      --accent2: #8b5cf6;
+      --good: #2dd4bf;
+      --danger: #fb7185;
+      --shadow: 0 12px 40px rgba(0,0,0,0.35);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; background: linear-gradient(180deg, var(--bg), #090d18); color: var(--text); }
+    body { min-height: 100vh; }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 20;
+      backdrop-filter: blur(12px);
+      background: rgba(11,16,32,0.78);
+      border-bottom: 1px solid var(--stroke);
+      padding: 14px 18px;
+    }
+
+    .topbar-inner, .hero, .controls, .games-grid, .footer, .about, .disclaimer { max-width: 1280px; margin: 0 auto; }
+
+    .topbar-inner {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+
+    .brand {
+      display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: 0.4px; font-size: 1.2rem;
+    }
+
+    .brand-badge {
+      width: 42px; height: 42px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: grid; place-items: center; box-shadow: var(--shadow);
+      font-size: 1.2rem;
+    }
+
+    .nav-actions { display: flex; gap: 10px; align-items: center; }
+
+    .btn {
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      font-weight: 700;
+    }
+
+    .btn:hover { transform: translateY(-1px); background: rgba(255,255,255,0.1); }
+    .btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; }
+
+    .hero {
+      padding: 46px 18px 26px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 22px;
+    }
+
+    .hero-card, .side-card, .control-panel, .about-card, .disclaimer-card {
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card { padding: 30px; }
+    .hero-card h1 { margin: 0 0 10px; font-size: clamp(2rem, 4vw, 3.5rem); }
+    .hero-card p { color: var(--muted); font-size: 1.05rem; line-height: 1.65; max-width: 62ch; }
+
+    .hero-stats {
+      display: flex; flex-wrap: wrap; gap: 14px; margin-top: 22px;
+    }
+
+    .stat {
+      padding: 14px 18px; border-radius: 18px; background: rgba(255,255,255,0.06); border: 1px solid var(--stroke);
+      min-width: 140px;
+    }
+
+    .stat b { display: block; font-size: 1.25rem; margin-bottom: 4px; }
+    .stat span { color: var(--muted); font-size: 0.92rem; }
+
+    .side-card { padding: 24px; display: grid; gap: 16px; align-content: start; }
+    .side-card h3 { margin: 0; font-size: 1.25rem; }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 10px; }
+    .chip {
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,0.05);
+      padding: 10px 12px; border-radius: 999px; color: var(--text); font-size: 0.92rem;
+    }
+
+    .controls { padding: 10px 18px 24px; }
+    .control-panel {
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 1.4fr 0.8fr 0.8fr 0.8fr;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .input, .select {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      outline: none;
+      font-size: 1rem;
+    }
+
+    .games-grid {
+      padding: 0 18px 30px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+    }
+
+    .game-card {
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      display: flex; flex-direction: column;
+      min-height: 310px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .game-card:hover { transform: translateY(-4px); border-color: rgba(110,168,255,0.5); }
+
+    .thumb {
+      height: 140px;
+      display: grid; place-items: center;
+      font-size: 3rem; font-weight: 900;
+      background: linear-gradient(135deg, rgba(110,168,255,0.28), rgba(139,92,246,0.28));
+      border-bottom: 1px solid var(--stroke);
+    }
+
+    .game-body { padding: 18px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
+    .game-title { margin: 0; font-size: 1.1rem; }
+    .meta { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pill {
+      font-size: 0.8rem; padding: 7px 10px; border-radius: 999px;
+      background: rgba(255,255,255,0.06); border: 1px solid var(--stroke); color: var(--muted);
+    }
+
+    .desc { color: var(--muted); line-height: 1.55; font-size: 0.95rem; flex: 1; }
+    .card-actions { display: flex; gap: 10px; }
+    .card-actions .btn { flex: 1; }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 40px;
+      border-radius: 24px;
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .about, .disclaimer, .footer { padding: 0 18px 28px; }
+    .about-card, .disclaimer-card, .footer-card { padding: 24px; }
+    .footer-card {
+      max-width: 1280px; margin: 0 auto;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--stroke);
+      border-radius: 22px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .modal {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.76); display: none; align-items: center; justify-content: center; z-index: 50; padding: 20px;
+    }
+
+    .modal.show { display: flex; }
+
+    .modal-content {
+      width: min(1100px, 100%);
+      height: min(720px, 90vh);
+      background: #0a0f1d;
+      border: 1px solid var(--stroke);
+      border-radius: 24px;
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      box-shadow: var(--shadow);
+    }
+
+    .modal-top {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      padding: 14px 16px; border-bottom: 1px solid var(--stroke); background: rgba(255,255,255,0.04);
+    }
+
+    iframe { width: 100%; height: 100%; border: none; background: #111; }
+
+    @media (max-width: 980px) {
+      .hero { grid-template-columns: 1fr; }
+      .control-panel { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-badge">🎮</div>
+        <div>
+          <div>PlayVault</div>
+          <small style="color: var(--muted); font-weight: 600;">HTML / CSS / JS Games Hub</small>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <button class="btn" id="randomBtn">Random Game</button>
+        <button class="btn primary" id="scrollGamesBtn">Browse Games</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-card">
+      <h1>1000+ Style Unblocked Games Website</h1>
+      <p>
+        This is a clean starter site for a huge browser games hub. It includes search, categories, sorting, featured picks, and a fullscreen game launcher. Add as many games as you want by editing one JavaScript array.
+      </p>
+      <div class="hero-stats">
+        <div class="stat"><b id="gameCountStat">0</b><span>Games Loaded</span></div>
+        <div class="stat"><b>Easy</b><span>Single-file setup</span></div>
+        <div class="stat"><b>Fast</b><span>No frameworks needed</span></div>
+      </div>
+    </div>
+
+    <div class="side-card">
+      <h3>Popular Types</h3>
+      <div class="chip-row">
+        <span class="chip">Slope</span>
+        <span class="chip">Racing</span>
+        <span class="chip">Parkour</span>
+        <span class="chip">Typing</span>
+        <span class="chip">Puzzle</span>
+        <span class="chip">Arcade</span>
+        <span class="chip">Skill</span>
+        <span class="chip">Sports</span>
+      </div>
+      <p style="color: var(--muted); line-height: 1.6; margin: 0;">
+        To make this a real massive games site, replace each placeholder link with your own game pages or embeds you have permission to use.
+      </p>
+    </div>
+  </section>
+
+  <section class="controls" id="gamesSection">
+    <div class="control-panel">
+      <input class="input" id="searchInput" type="text" placeholder="Search games like Slope, Run, Drift, Puzzle..." />
+      <select class="select" id="categoryFilter">
+        <option value="all">All Categories</option>
+      </select>
+      <select class="select" id="sortSelect">
+        <option value="popular">Sort: Popular</option>
+        <option value="az">Sort: A–Z</option>
+        <option value="newest">Sort: Newest</option>
+      </select>
+      <button class="btn primary" id="loadMoreBtn">Load More</button>
+    </div>
+  </section>
+
+  <main class="games-grid" id="gamesGrid"></main>
+
+  <section class="about">
+    <div class="about-card">
+      <h2 style="margin-top:0;">How to Add More Games</h2>
+      <p style="color: var(--muted); line-height:1.7; margin-bottom:0;">
+        Open the JavaScript section at the bottom of this file and add more objects into the <code>games</code> array. Each game needs a title, category, icon, description, rating, year, and URL. You can scale this to hundreds or thousands of entries without changing the design.
+      </p>
+    </div>
+  </section>
+
+  <section class="disclaimer">
+    <div class="disclaimer-card">
+      <h2 style="margin-top:0;">Important</h2>
+      <p style="color: var(--muted); line-height:1.7; margin-bottom:0;">
+        Only link to games you own, have permission to host, or are legally embeddable. Don’t scrape or repost copyrighted games without permission.
+      </p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-card">Built with plain HTML, CSS, and JavaScript.</div>
+  </footer>
+
+  <div class="modal" id="gameModal">
+    <div class="modal-content">
+      <div class="modal-top">
+        <strong id="modalTitle">Game</strong>
+        <div style="display:flex; gap:10px;">
+          <button class="btn" id="openTabBtn">Open in New Tab</button>
+          <button class="btn" id="closeModalBtn">Close</button>
+        </div>
+      </div>
+      <iframe id="gameFrame" src="about:blank" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <script>
+    const games = [
+      { title: "Slope", category: "Skill", icon: "🟢", description: "Roll down a neon slope and dodge obstacles at high speed.", rating: 4.9, year: 2026, url: "https://example.com/games/slope" },
+      { title: "Run 3", category: "Runner", icon: "🏃", description: "Dash through space tunnels and survive impossible jumps.", rating: 4.8, year: 2025, url: "https://example.com/games/run-3" },
+      { title: "Drift Boss", category: "Driving", icon: "🚗", description: "Tap to drift around sharp corners without falling.", rating: 4.7, year: 2026, url: "https://example.com/games/drift-boss" },
+      { title: "Moto X3M", category: "Racing", icon: "🏍️", description: "Race across crazy stunt tracks full of traps and flips.", rating: 4.8, year: 2024, url: "https://example.com/games/moto-x3m" },
+      { title: "Basket Random", category: "Sports", icon: "🏀", description: "Chaotic one-button basketball with hilarious physics.", rating: 4.6, year: 2025, url: "https://example.com/games/basket-random" },
+      { title: "Tunnel Rush", category: "Arcade", icon: "🌈", description: "React fast and dodge spinning obstacles in a tunnel.", rating: 4.7, year: 2026, url: "https://example.com/games/tunnel-rush" },
+      { title: "2048", category: "Puzzle", icon: "🔢", description: "Slide and combine number tiles to reach 2048.", rating: 4.5, year: 2023, url: "https://example.com/games/2048" },
+      { title: "Typing Sprint", category: "Typing", icon: "⌨️", description: "Type quickly to boost speed and beat your record.", rating: 4.4, year: 2026, url: "https://example.com/games/typing-sprint" },
+      { title: "Sky Parkour", category: "Platformer", icon: "☁️", description: "Jump across floating platforms and avoid falling.", rating: 4.3, year: 2025, url: "https://example.com/games/sky-parkour" },
+      { title: "Retro Snake", category: "Classic", icon: "🐍", description: "Collect food, grow longer, and avoid crashing.", rating: 4.2, year: 2022, url: "https://example.com/games/retro-snake" },
+      { title: "Pixel Shooter", category: "Action", icon: "🎯", description: "Fast-paced pixel arena survival with simple controls.", rating: 4.5, year: 2026, url: "https://example.com/games/pixel-shooter" },
+      { title: "Cube Dash", category: "Skill", icon: "🧊", description: "Time your jumps and avoid spikes in a cube world.", rating: 4.6, year: 2025, url: "https://example.com/games/cube-dash" }
+    ];
+
+    const gamesGrid = document.getElementById('gamesGrid');
+    const searchInput = document.getElementById('searchInput');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const sortSelect = document.getElementById('sortSelect');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    const randomBtn = document.getElementById('randomBtn');
+    const scrollGamesBtn = document.getElementById('scrollGamesBtn');
+    const gameCountStat = document.getElementById('gameCountStat');
+
+    const gameModal = document.getElementById('gameModal');
+    const gameFrame = document.getElementById('gameFrame');
+    const modalTitle = document.getElementById('modalTitle');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const openTabBtn = document.getElementById('openTabBtn');
+
+    let visibleCount = 12;
+    let currentGameUrl = '';
+
+    function seedMoreGames(targetCount = 1200) {
+      const base = [...games];
+      let i = 0;
+      while (games.length < targetCount) {
+        const template = base[i % base.length];
+        games.push({
+          ...template,
+          title: `${template.title} ${Math.floor(i / base.length) + 2}`,
+          rating: Number((4 + Math.random()).toFixed(1)),
+          year: 2022 + (i % 5),
+          url: template.url
+        });
+        i++;
+      }
+    }
+
+    function getCategories() {
+      return ['all', ...new Set(games.map(g => g.category))];
+    }
+
+    function populateCategories() {
+      categoryFilter.innerHTML = '';
+      getCategories().forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        option.textContent = cat === 'all' ? 'All Categories' : cat;
+        categoryFilter.appendChild(option);
+      });
+    }
+
+    function getFilteredGames() {
+      const search = searchInput.value.trim().toLowerCase();
+      const category = categoryFilter.value;
+      const sort = sortSelect.value;
+
+      let filtered = games.filter(game => {
+        const matchesSearch =
+          game.title.toLowerCase().includes(search) ||
+          game.category.toLowerCase().includes(search) ||
+          game.description.toLowerCase().includes(search);
+
+        const matchesCategory = category === 'all' || game.category === category;
+        return matchesSearch && matchesCategory;
+      });
+
+      if (sort === 'az') {
+        filtered.sort((a, b) => a.title.localeCompare(b.title));
+      } else if (sort === 'newest') {
+        filtered.sort((a, b) => b.year - a.year);
+      } else {
+        filtered.sort((a, b) => b.rating - a.rating);
+      }
+
+      return filtered;
+    }
+
+    function renderGames() {
+      const filtered = getFilteredGames();
+      const visibleGames = filtered.slice(0, visibleCount);
+      gameCountStat.textContent = games.length.toLocaleString();
+
+      if (!visibleGames.length) {
+        gamesGrid.innerHTML = '<div class="empty-state">No games matched your search.</div>';
+        return;
+      }
+
+      gamesGrid.innerHTML = visibleGames.map((game, index) => `
+        <article class="game-card">
+          <div class="thumb">${game.icon}</div>
+          <div class="game-body">
+            <h3 class="game-title">${escapeHtml(game.title)}</h3>
+            <div class="meta">
+              <span class="pill">${escapeHtml(game.category)}</span>
+              <span class="pill">⭐ ${game.rating}</span>
+              <span class="pill">${game.year}</span>
+            </div>
+            <p class="desc">${escapeHtml(game.description)}</p>
+            <div class="card-actions">
+              <button class="btn primary" onclick="playGame(${index}, '${escapeJs(game.title)}', '${escapeJs(game.url)}')">Play</button>
+              <button class="btn" onclick="copyLink('${escapeJs(game.url)}')">Copy Link</button>
+            </div>
+          </div>
+        </article>
+      `).join('');
+
+      loadMoreBtn.style.display = filtered.length > visibleCount ? 'inline-block' : 'none';
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function escapeJs(text) {
+      return String(text).replaceAll('\\', '\\\\').replaceAll("'", "\\'");
+    }
+
+    window.playGame = function(index, title, url) {
+      modalTitle.textContent = title;
+      currentGameUrl = url;
+      gameFrame.src = url;
+      gameModal.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    window.copyLink = async function(url) {
+      try {
+        await navigator.clipboard.writeText(url);
+        alert('Game link copied!');
+      } catch {
+        alert('Could not copy the link.');
+      }
+    }
+
+    function closeModal() {
+      gameModal.classList.remove('show');
+      gameFrame.src = 'about:blank';
+      document.body.style.overflow = '';
+    }
+
+    searchInput.addEventListener('input', () => {
+      visibleCount = 12;
+      renderGames();
+    });
+
+    categoryFilter.addEventListener('change', () => {
+      visibleCount = 12;
+      renderGames();
+    });
+
+    sortSelect.addEventListener('change', () => {
+      visibleCount = 12;
+      renderGames();
+    });
+
+    loadMoreBtn.addEventListener('click', () => {
+      visibleCount += 24;
+      renderGames();
+    });
+
+    randomBtn.addEventListener('click', () => {
+      const filtered = getFilteredGames();
+      const randomGame = filtered[Math.floor(Math.random() * filtered.length)];
+      if (randomGame) playGame(0, randomGame.title, randomGame.url);
+    });
+
+    scrollGamesBtn.addEventListener('click', () => {
+      document.getElementById('gamesSection').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    closeModalBtn.addEventListener('click', closeModal);
+    gameModal.addEventListener('click', (e) => {
+      if (e.target === gameModal) closeModal();
+    });
+
+    openTabBtn.addEventListener('click', () => {
+      if (currentGameUrl) window.open(currentGameUrl, '_blank', 'noopener');
+    });
+
+    seedMoreGames();
+    populateCategories();
+    renderGames();
+  </script>
+</body>
+</html>
